@@ -83,9 +83,8 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                 
                 im0 = cv2.cvtColor(im0, cv2.COLOR_RGB2BGR) #reshape image format to (BGR)
                 gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-
                 for i, pose in enumerate(output_data):  # detections per image
-                
+                    average_precision = []
                     if len(output_data):  #check if no pose
                         for c in pose[:, 5].unique(): # Print results
                             n = (pose[:, 5] == c).sum()  # detections per class
@@ -95,9 +94,21 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                             c = int(cls)  # integer class
                             kpts = pose[det_index, 6:]
                             label = None if opt.hide_labels else (names[c] if opt.hide_conf else f'{names[c]} {conf:.2f}')
-                            plot_one_box_kpt(xyxy, im0, label=label, color=colors(c, True), 
-                                        line_thickness=opt.line_thickness,kpt_label=True, kpts=kpts, steps=3, 
-                                        orig_shape=im0.shape[:2])
+                            if label and len(label.split(' ')) > 1:
+                                average_precision.append(label.split(' ')[-1])
+                            plot_skeleton_kpts(im0, kpts, steps=3, orig_shape=im0.shape[:2])
+
+                    if len(average_precision) > 0:
+                        average_precision = np.mean(np.asarray(average_precision))
+                    else:
+                        average_precision = 1
+                    overlay = im0.copy()
+                    cv2.rectangle(overlay, (0, 0), (430, 100), (0, 255, 0), -1)  # Draw a green rectangle
+                    cv2.addWeighted(overlay, 0.5, im0, 0.5, 0, im0)
+                    cv2.putText(im0, f"Number of people: {n}", (10, 30),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                    cv2.putText(im0, f"Average confidence: {average_precision:.2f}", (10, 70),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
                 
                 end_time = time.time()  #Calculatio for FPS
