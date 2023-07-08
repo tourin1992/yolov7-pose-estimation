@@ -88,14 +88,13 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                     if len(output_data):  #check if no pose
                         for c in pose[:, 5].unique(): # Print results
                             n = (pose[:, 5] == c).sum()  # detections per class
-                            print("No of Objects in Current Frame : {}".format(n))
                         
                         for det_index, (*xyxy, conf, cls) in enumerate(reversed(pose[:,:6])): #loop over poses for drawing on frame
                             c = int(cls)  # integer class
                             kpts = pose[det_index, 6:]
                             label = None if opt.hide_labels else (names[c] if opt.hide_conf else f'{names[c]} {conf:.2f}')
                             if label and len(label.split(' ')) > 1:
-                                average_precision.append(label.split(' ')[-1])
+                                average_precision.append(float(label.split(' ')[-1]))
                             plot_skeleton_kpts(im0, kpts, steps=3, orig_shape=im0.shape[:2])
 
                     if len(average_precision) > 0:
