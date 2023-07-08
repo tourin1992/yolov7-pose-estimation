@@ -108,6 +108,7 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
                     cv2.putText(im0, f"Average confidence: {average_precision:.2f}", (10, 70),
                                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                    im0 = cv2.resize(im0, dsize=(opt.img_width, opt.img_height))
 
                 
                 end_time = time.time()  #Calculatio for FPS
@@ -147,6 +148,9 @@ def parse_opt():
     parser.add_argument('--line-thickness', default=3, type=int, help='bounding box thickness (pixels)') #box linethickness
     parser.add_argument('--hide-labels', default=False, action='store_true', help='hide labels') #box hidelabel
     parser.add_argument('--hide-conf', default=False, action='store_true', help='hide confidences') #boxhideconf
+    parser.add_argument('--img_width', type=int, default=2560) # 2560, 1920
+    parser.add_argument('--img_height', type=int, default=1440) # 1440, 1080
+    parser.add_argument('--scale_factor', type=float, default=0.7125) # 0.2 for higher fps
     opt = parser.parse_args()
     return opt
 
