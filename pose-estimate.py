@@ -13,7 +13,7 @@ from utils.plots import output_to_keypoint, plot_skeleton_kpts,colors,plot_one_b
 
 @torch.no_grad()
 def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view_img=False,
-        save_conf=False,line_thickness = 3,hide_labels=False, hide_conf=True):
+        save_conf=False, line_thickness = 3, hide_labels=False, hide_conf=True, img_width=2560, img_height=1440, scale_factor=0.7125):
 
     frame_count = 0  #count no of frames
     total_fps = 0  #count total fps
