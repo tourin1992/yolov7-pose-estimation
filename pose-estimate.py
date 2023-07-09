@@ -21,7 +21,6 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
     fps_list = []    #list to store fps
     
     device = select_device(opt.device) #select device
-    half = device.type != 'cpu'
 
     model = attempt_load(poseweights, map_location=device)  #Load model
     _ = model.eval()
@@ -38,12 +37,10 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
 
     else:
         frame_width = int(cap.get(3))  #get video frame width
-        frame_height = int(cap.get(4)) #get video frame height
 
         
         vid_write_image = letterbox(cap.read()[1], (frame_width), stride=64, auto=True)[0] #init videowriter
         resize_height, resize_width = vid_write_image.shape[:2]
-        out_video_name = f"{source.split('/')[-1].split('.')[0]}"
         out = cv2.VideoWriter(f"{source}_keypoint.mp4",
                             cv2.VideoWriter_fourcc(*'mp4v'), 30,
                             (resize_width, resize_height))
@@ -58,7 +55,6 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                 orig_image = frame #store frame
                 image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB) #convert frame to RGB
                 image = letterbox(image, (frame_width), stride=64, auto=True)[0]
-                image_ = image.copy()
                 image = transforms.ToTensor()(image)
                 image = torch.tensor(np.array([image.numpy()]))
             
@@ -76,14 +72,12 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                                             nkpt=model.yaml['nkpt'], # Number of keypoints.
                                             kpt_label=True)
             
-                output = output_to_keypoint(output_data)
 
                 im0 = image[0].permute(1, 2, 0) * 255 # Change format [b, c, h, w] to [h, w, c] for displaying the image.
                 im0 = im0.cpu().numpy().astype(np.uint8)
                 
                 im0 = cv2.cvtColor(im0, cv2.COLOR_RGB2BGR) #reshape image format to (BGR)
-                gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-                for i, pose in enumerate(output_data):  # detections per image
+                for _, pose in enumerate(output_data):  # detections per image
                     average_precision = []
                     if len(output_data):  #check if no pose
                         for c in pose[:, 5].unique(): # Print results
@@ -143,11 +137,11 @@ def parse_opt():
     parser.add_argument('--poseweights', nargs='+', type=str, default='yolov7-w6-pose.pt', help='model path(s)')
     parser.add_argument('--source', type=str, default='football1.mp4', help='video/0 for webcam') #video source
     parser.add_argument('--device', type=str, default='cpu', help='cpu/0,1,2,3(gpu)')   #device arugments
-    parser.add_argument('--view-img', action='store_true', help='display results')  #display results
-    parser.add_argument('--save-conf', action='store_true', help='save confidences in --save-txt labels') #save confidence in txt writing
-    parser.add_argument('--line-thickness', default=3, type=int, help='bounding box thickness (pixels)') #box linethickness
-    parser.add_argument('--hide-labels', default=False, action='store_true', help='hide labels') #box hidelabel
-    parser.add_argument('--hide-conf', default=False, action='store_true', help='hide confidences') #boxhideconf
+    parser.add_argument('--view_img', action='store_true', help='display results')  #display results
+    parser.add_argument('--save_conf', action='store_true', help='save confidences in --save-txt labels') #save confidence in txt writing
+    parser.add_argument('--line_thickness', default=3, type=int, help='bounding box thickness (pixels)') #box linethickness
+    parser.add_argument('--hide_labels', default=False, action='store_true', help='hide labels') #box hidelabel
+    parser.add_argument('--hide_conf', default=False, action='store_true', help='hide confidences') #boxhideconf
     parser.add_argument('--img_width', type=int, default=2560) # 2560, 1920
     parser.add_argument('--img_height', type=int, default=1440) # 1440, 1080
     parser.add_argument('--scale_factor', type=float, default=0.7125) # 0.2 for higher fps
