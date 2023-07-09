@@ -89,7 +89,7 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                             label = None if opt.hide_labels else (names[c] if opt.hide_conf else f'{names[c]} {conf:.2f}')
                             if label and len(label.split(' ')) > 1:
                                 average_precision.append(float(label.split(' ')[-1]))
-                            plot_skeleton_kpts(im0, kpts, steps=3, orig_shape=im0.shape[:2])
+                            plot_skeleton_kpts(im0, kpts, steps=3, orig_shape=im0.shape[:2],line_thickness=opt.line_thickness)
 
                     if len(average_precision) > 0:
                         average_precision = np.mean(np.asarray(average_precision))

@@ -477,7 +477,7 @@ def output_to_keypoint(output):
     return np.array(targets)
 
 
-def plot_skeleton_kpts(im, kpts, steps, orig_shape=None):
+def plot_skeleton_kpts(im, kpts, steps, orig_shape=None, line_thickness=3):
     #Plot the skeleton and keypointsfor coco datatset
     palette = np.array([[255, 128, 0], [255, 153, 51], [255, 178, 102],
                         [230, 230, 0], [255, 153, 255], [153, 204, 255],
@@ -519,4 +519,4 @@ def plot_skeleton_kpts(im, kpts, steps, orig_shape=None):
             continue
         if pos2[0] % 640 == 0 or pos2[1] % 640 == 0 or pos2[0]<0 or pos2[1]<0:
             continue
-        cv2.line(im, pos1, pos2, (int(r), int(g), int(b)), thickness=2)
+        cv2.line(im, pos1, pos2, (int(r), int(g), int(b)), thickness=line_thickness)
