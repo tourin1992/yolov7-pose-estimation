@@ -32,10 +32,10 @@ pip install -r requirements.txt
 - Run the code with mentioned command below.
 ```
 #For Webcamera
-python pose-estimate.py --source 0 --view-img
+python pose-estimate.py --source 0 --view_img
 
 #For External Camera
-python pose-estimate.py --source 1 --view-img
+python pose-estimate.py --source 1 --view_img
 ```
 
 ### Important arguments
