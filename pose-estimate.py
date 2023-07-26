@@ -78,6 +78,7 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                 
                 im0 = cv2.cvtColor(im0, cv2.COLOR_RGB2BGR) #reshape image format to (BGR)
                 for _, pose in enumerate(output_data):  # detections per image
+                    n = 0    
                     average_precision = []
                     if len(output_data):  #check if no pose
                         for c in pose[:, 5].unique(): # Print results
